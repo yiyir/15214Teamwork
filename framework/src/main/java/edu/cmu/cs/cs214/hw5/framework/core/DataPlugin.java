@@ -1,9 +1,11 @@
-package edu.cmu.cs.cs214.hw5.plugin;
+package edu.cmu.cs.cs214.hw5.framework.core;
 
-import edu.cmu.cs.cs214.hw5.framework.core.Restaurant;
 
 import java.util.List;
 
 public interface DataPlugin {
     List<Restaurant> getRestaurants(String city);
+
+    @Override
+    String toString();
 }

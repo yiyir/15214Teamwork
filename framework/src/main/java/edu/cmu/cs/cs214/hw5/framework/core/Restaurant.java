@@ -1,6 +1,5 @@
 package edu.cmu.cs.cs214.hw5.framework.core;
 
-import com.sun.prism.PixelFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class Restaurant {
     /**
      * the business hours of the restaurant
      */
-    private final List<List<Integer>> hours;
+    private List<List<Integer>> hours;
     /**
      * the column names(keys) which represent the meaning of the data
      */
@@ -117,28 +116,25 @@ public class Restaurant {
      * @return whether the restaurant is open at the given time
      */
     public boolean isOpen(int day, int time) {
+        // we assume the input day and time are both valid
         List<Integer> hoursRange = hours.get(day);
         if (hoursRange == null || hoursRange.size() == 0) return false;
-        if (hoursRange.size() == 2) {
-            int openHour = hoursRange.get(0);
-            int closeHour = hoursRange.get(1);
-            if (openHour < closeHour) {
-                if (time >= openHour && time < closeHour) return true;
+        for (int i = 0; i < hoursRange.size(); i += 2) {
+            if (hoursRange.get(i) < hoursRange.get(i + 1)) {
+                if (time >= hoursRange.get(i) && time < hoursRange.get(i + 1)) return true;
             } else {
-                if (time >= openHour) return true;
+                if (time >= hoursRange.get(i)) return true;
             }
-            int lastDay = (day + 6) % 7;
-            List<Integer> lastDayHours = hours.get(lastDay);
-            if (lastDayHours != null && lastDayHours.size() != 0) {
-                int size = lastDayHours.size();
-                if (lastDayHours.get(size - 1) < lastDayHours.get(size - 2)) {
-                    if (time < lastDayHours.get(size - 1)) return true;
-                }
-            }
-            return false;
         }
-
-
+        // check if the input time is within last day's overnight opening hours range
+        int lastDay = (day + 6) % 7;
+        List<Integer> lastDayHours = hours.get(lastDay);
+        if (lastDayHours != null && lastDayHours.size() != 0) {
+            int size = lastDayHours.size();
+            if (lastDayHours.get(size - 1) < lastDayHours.get(size - 2)) {
+                if (time < lastDayHours.get(size - 1)) return true;
+            }
+        }
         return false;
     }
 
