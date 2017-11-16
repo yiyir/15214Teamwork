@@ -48,7 +48,7 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
     private final JLabel currentSortLabel;
     private final JLabel currentFilterLabel;
     private final JLabel currentDisplayLabel;
-    
+
     // Input-dialogue-related stuff.
     private Object selectedDay;
     private Object selectedHour;
