@@ -7,7 +7,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-
+/**
+ * The TopfoodFramework GUI implementation.
+ */
 public class TopfoodFrameworkGui implements TopfoodChangeListener {
     private static final String DEFAULT_TITLE = "Topfood Framework";
 
@@ -30,7 +32,8 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
     private static final String SET_DAY_MSG = "Select day:";
     private static final String[] DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private static final String ERROR_NO_DATA_MSG = "No data is loaded to be displayed.";
-    private static final String ERROR_SORT_NOT_SELECTED_MSG = "Sorting function is not selected";
+    private static final String ERROR_SORT_NOT_SELECTED_MSG = "Sorting function is not selected.";
+    private static final String ERROR_NO_RESULTS_MSG = "No results are found given the filtering conditions.";
 
     // Menu-related stuff.
     private final JMenu loadDataMenu;
@@ -45,16 +48,20 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
     private final JLabel currentSortLabel;
     private final JLabel currentFilterLabel;
     private final JLabel currentDisplayLabel;
-
+    
+    // Input-dialogue-related stuff.
     private Object selectedDay;
     private Object selectedHour;
+
     // The parent JFrame window.
     private final JFrame frame;
     private TopfoodFrameworkImpl core;
-    private DataPlugin currentDataPlugin;
-    private DisplayPlugin currentDisplayPlugin;
 
-
+    /**
+     * Constructor method.
+     *
+     * @param core the core of framework
+     */
     public TopfoodFrameworkGui(TopfoodFrameworkImpl core) {
         this.core = core;
         frame = new JFrame(DEFAULT_TITLE);
@@ -120,8 +127,8 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         functionsMenu.add(sortMenu);
         // Add buttons to the 'Sort Data' menu.
         List<String> keys = core.getKeys();
-        if (keys!= null) {
-            for (int i =0; i< keys.size();i++) {
+        if (keys != null) {
+            for (int i = 0; i < keys.size(); i++) {
                 final int index = i;
                 JRadioButtonMenuItem sortMenuItem = new JRadioButtonMenuItem(keys.get(i));
                 sortMenuItem.setSelected(false);
@@ -194,7 +201,7 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
     }
 
     @Override
-    public void onDisplayPluginRegistered(DisplayPlugin plugin) {
+    public void onDisplayPluginRegistered(final DisplayPlugin plugin) {
         JRadioButtonMenuItem displayMenuItem = new JRadioButtonMenuItem(plugin.toString());
         displayMenuItem.setSelected(false);
         displayMenuItem.addActionListener(event -> {
@@ -213,18 +220,18 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
                 String indexOfKey = sortItemGroup.getSelection().getActionCommand();
                 int index = Integer.valueOf(indexOfKey);
                 core.sortByKey(index);
-                for(Restaurant res: core.getProcessedData()){
+                for (Restaurant res : core.getProcessedData()) {
                     System.out.println(res.getName());
                 }
-
+//                if (!core.display(plugin, index)) {
+//                    showErrorDialog(frame, ERROR_NO_RESULTS_MSG);
+//                    filterFunction.setSelected(false);
+//                    onFilterChanged(-1, -1);
+//                }
             }
         });
         displayPluginGroup.add(displayMenuItem);
         displayDataMenu.add(displayMenuItem);
-    }
-
-    private static void showErrorDialog(Component c, String msg) {
-        JOptionPane.showMessageDialog(c, msg, "Error!", JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
@@ -262,5 +269,15 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
             sb.append(time % 100);
         }
         currentFilterLabel.setText(sb.toString());
+    }
+
+    /**
+     * Shows an error message dialogue box.
+     *
+     * @param c   the parent component of the message box
+     * @param msg the error message to be shown
+     */
+    private static void showErrorDialog(Component c, String msg) {
+        JOptionPane.showMessageDialog(c, msg, "Error!", JOptionPane.ERROR_MESSAGE);
     }
 }

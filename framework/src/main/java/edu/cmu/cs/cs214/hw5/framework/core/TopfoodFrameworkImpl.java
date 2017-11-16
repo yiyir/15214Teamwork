@@ -21,6 +21,10 @@ public class TopfoodFrameworkImpl {
      */
     private TopfoodChangeListener listener;
     /**
+     * the city name of the search
+     */
+    private String city;
+    /**
      * the current data plugin
      */
     private DataPlugin currentDataPlugin;
@@ -74,6 +78,7 @@ public class TopfoodFrameworkImpl {
         for (Restaurant res : data) {
             processedData.add(res);
         }
+        this.city = city;
         notifyDataPluginChanged(plugin, city);
         return true;
     }
@@ -120,6 +125,33 @@ public class TopfoodFrameworkImpl {
     }
 
     /**
+     * Displays the 'top 10 restaurants' through the given display plugin.
+     *
+     * @param plugin the given display plugin
+     * @param index  the index of the keys to sort the restaurants
+     * @return true if the operation succeeds, false if no results are found due to the given filtering conditions
+     */
+    public boolean display(DisplayPlugin plugin, int index) {
+        if (currentDisplayPlugin != plugin) {
+            currentDisplayPlugin = plugin;
+        }
+        if (processedData.isEmpty()) return false;
+        String[] xData = new String[10];
+        for (int i = 0; i < 10; i++) {
+            xData[i] = processedData.get(i).getName();
+        }
+        Double[] yData = new Double[10];
+        for (int i = 0; i < 10; i++) {
+            yData[i] = processedData.get(i).getValues().get(index);
+        }
+        String xLabel = "Restaurant Name";
+        String yLabel = getKeys().get(index);
+        String title = "Top 10 Restaurants in " + city;
+        currentDisplayPlugin.display(xData, yData, xLabel, yLabel, title);
+        return true;
+    }
+
+    /**
      * Gets the keys(column names) of the data.
      *
      * @return the keys
@@ -129,10 +161,20 @@ public class TopfoodFrameworkImpl {
         return null;
     }
 
+    /**
+     * Gets the current data plugin.
+     *
+     * @return the current data plugin
+     */
     public DataPlugin getCurrentDataPlugin() {
         return currentDataPlugin;
     }
 
+    /**
+     * Gets the internal stored processed data of the framework.
+     *
+     * @return the internal stored processed data
+     */
     public List<Restaurant> getProcessedData() {
         return processedData;
     }
