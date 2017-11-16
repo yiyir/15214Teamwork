@@ -1,16 +1,12 @@
 package edu.cmu.cs.cs214.hw5.framework.gui;
 
-import edu.cmu.cs.cs214.hw5.framework.core.DataPlugin;
-import edu.cmu.cs.cs214.hw5.framework.core.DisplayPlugin;
-import edu.cmu.cs.cs214.hw5.framework.core.TopfoodChangeListener;
-import edu.cmu.cs.cs214.hw5.framework.core.TopfoodFrameworkImpl;
+import edu.cmu.cs.cs214.hw5.framework.core.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
+
 
 public class TopfoodFrameworkGui implements TopfoodChangeListener {
     private static final String DEFAULT_TITLE = "Topfood Framework";
@@ -27,29 +23,44 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
     // Dialog titles and messages.
     private static final String SET_CITY_TITLE = "Set city of interest";
     private static final String SET_CITY_MSG = "Enter city name:";
-    private static final String ERROR_LOAD_DATA_TITLE = "Error!";
-    private static final String ERROR_LOAD_DATA_MSG = "No data is available for the given search, please re-enter the city name.";
-    private static final String SET_TIME_TITLE = "Filter by opening hours";
-    private static final String SET_TIME_MSG = "Select time:";
+    private static final String ERROR_LOAD_DATA_MSG = "No data is available for the given search, please re-select.";
+    private static final String SET_HOUR_TITLE = "Filter by opening hours";
+    private static final String SET_HOUR_MSG = "Select time:";
+    private static final String SET_DAY_TITLE = "Filter by opening hours";
+    private static final String SET_DAY_MSG = "Select day:";
+    private static final String[] DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private static final String ERROR_NO_DATA_MSG = "No data is loaded to be displayed.";
+    private static final String ERROR_SORT_NOT_SELECTED_MSG = "Sorting function is not selected";
 
     // Menu-related stuff.
     private final JMenu loadDataMenu;
     private final JMenu displayDataMenu;
     private final ButtonGroup dataPluginGroup = new ButtonGroup();
     private final ButtonGroup displayPluginGroup = new ButtonGroup();
+    private final ButtonGroup sortItemGroup = new ButtonGroup();
+    private final JCheckBoxMenuItem filterFunction;
 
+    // Labels to show a summary of current status of the framework.
+    private final JLabel currentDataLabel;
+    private final JLabel currentSortLabel;
+    private final JLabel currentFilterLabel;
+    private final JLabel currentDisplayLabel;
 
+    private Object selectedDay;
+    private Object selectedHour;
     // The parent JFrame window.
     private final JFrame frame;
     private TopfoodFrameworkImpl core;
     private DataPlugin currentDataPlugin;
     private DisplayPlugin currentDisplayPlugin;
 
+
     public TopfoodFrameworkGui(TopfoodFrameworkImpl core) {
         this.core = core;
         frame = new JFrame(DEFAULT_TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(500, 500));
+        frame.setLocation(350, 350);
 
         // Set-up the menu bar.
         JMenuBar menuBar = new JMenuBar();
@@ -67,21 +78,38 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         dataMenu.add(functionsMenu);
 
         // Add a 'Filter Data' menu item to the 'Functions' menu.
-        JCheckBoxMenuItem filterFunction = new JCheckBoxMenuItem(FUNCTION_FILTER);
+        filterFunction = new JCheckBoxMenuItem(FUNCTION_FILTER);
         filterFunction.setSelected(false);
         filterFunction.addActionListener(e -> {
             if (filterFunction.isSelected()) {
-                String[] hours = new String[48];
-                for (int i = 0; i < 48; i+=2) {
-                    hours[i] =i/2+":"+"00";
-                    hours[i+1]=i/2+":"+"30";
-                }
-                JOptionPane.showInputDialog(frame,
-                        SET_TIME_MSG, SET_TIME_TITLE,
+                // Pop up input dialogue boxes to ask user for day and hour.
+                selectedDay = JOptionPane.showInputDialog(frame,
+                        SET_DAY_MSG, SET_DAY_TITLE,
                         JOptionPane.PLAIN_MESSAGE, null,
-                        hours, hours[0]);
+                        DAYS, DAYS[0]);
+                if (selectedDay == null) {
+                    filterFunction.setSelected(false);
+                    onFilterChanged(-1, -1);
+                } else {
+                    String[] hours = new String[48];
+                    for (int i = 0; i < 48; i += 2) {
+                        hours[i] = i / 2 + ":" + "00";
+                        hours[i + 1] = i / 2 + ":" + "30";
+                    }
+                    selectedHour = JOptionPane.showInputDialog(frame,
+                            SET_HOUR_MSG, SET_HOUR_TITLE,
+                            JOptionPane.PLAIN_MESSAGE, null,
+                            hours, hours[0]);
+                    if (selectedHour == null) {
+                        filterFunction.setSelected(false);
+                        onFilterChanged(-1, -1);
+                    } else {
+                        onFilterChanged((int) selectedDay, (int) selectedHour);
+                    }
+                }
             } else {
                 filterFunction.setSelected(false);
+                onFilterChanged(-1, -1);
             }
         });
         functionsMenu.add(filterFunction);
@@ -90,12 +118,18 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         JMenu sortMenu = new JMenu(FUNCTION_SORT);
         sortMenu.setMnemonic(KeyEvent.VK_N);
         functionsMenu.add(sortMenu);
-        // add buttons here
-        if (core.getKeys() != null) {
-            for (String key : core.getKeys()) {
-                JCheckBoxMenuItem sortMenuItem = new JCheckBoxMenuItem(key);
+        // Add buttons to the 'Sort Data' menu.
+        List<String> keys = core.getKeys();
+        if (keys!= null) {
+            for (int i =0; i< keys.size();i++) {
+                final int index = i;
+                JRadioButtonMenuItem sortMenuItem = new JRadioButtonMenuItem(keys.get(i));
                 sortMenuItem.setSelected(false);
-                dataPluginGroup.add(sortMenuItem);
+                sortMenuItem.setActionCommand(String.valueOf(index));
+                sortMenuItem.addActionListener(e -> {
+                    onSortChanged(index);
+                });
+                sortItemGroup.add(sortMenuItem);
                 sortMenu.add(sortMenuItem);
             }
         }
@@ -115,8 +149,22 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         exitMenuItem.addActionListener(event -> System.exit(0));
         dataMenu.add(exitMenuItem);
 
+        // Add an information panel to the frame.
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS));
+        currentDataLabel = new JLabel("Current data plugin: null   City name: null");
+        currentSortLabel = new JLabel("Sort by: null");
+        currentFilterLabel = new JLabel("Filter by: null");
+        currentDisplayLabel = new JLabel();
+        infoPanel.add(currentDataLabel);
+        infoPanel.add(currentSortLabel);
+        infoPanel.add(currentFilterLabel);
+        infoPanel.add(currentDisplayLabel);
+
+
         menuBar.add(dataMenu);
         frame.setJMenuBar(menuBar);
+        frame.add(infoPanel);
         frame.pack();
         frame.setVisible(true);
     }
@@ -126,16 +174,20 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         JRadioButtonMenuItem dataMenuItem = new JRadioButtonMenuItem(plugin.toString());
         dataMenuItem.setSelected(false);
         dataMenuItem.addActionListener(event -> {
+            // Pop up an input dialogue box to ask user for city name.
             String city = (String) JOptionPane.showInputDialog(frame, SET_CITY_MSG,
                     SET_CITY_TITLE, JOptionPane.PLAIN_MESSAGE, null, null, "");
+            // Try to load data if the input dialogue box is not cancelled.
             if (city != null) {
+                city = city.trim().toLowerCase();
                 boolean success = core.loadData(plugin, city);
+                // An error message is popped up if data is not available for the given search.
+                // And the user needs to re-select the data plugin.
                 if (!success) {
-                    showErrorDialog(frame, ERROR_LOAD_DATA_TITLE, ERROR_LOAD_DATA_MSG);
+                    showErrorDialog(frame, ERROR_LOAD_DATA_MSG);
                     dataPluginGroup.clearSelection();
                 }
             }
-
         });
         dataPluginGroup.add(dataMenuItem);
         loadDataMenu.add(dataMenuItem);
@@ -146,24 +198,69 @@ public class TopfoodFrameworkGui implements TopfoodChangeListener {
         JRadioButtonMenuItem displayMenuItem = new JRadioButtonMenuItem(plugin.toString());
         displayMenuItem.setSelected(false);
         displayMenuItem.addActionListener(event -> {
-            // cannot display when function is not selected or data is not loaded
-//            if (core.getPlayers().isEmpty()) {
-//                // Can't start a game with no players.
-//                showErrorDialog(frame, ERROR_NO_PLAYERS_TITLE, ERROR_NO_PLAYERS_MSG);
-//                gameGroup.clearSelection();
-//            } else {
-//                core.startNewGame(plugin);
-//            }
+            if (core.getCurrentDataPlugin() == null) { // Cannot display if no data is loaded.
+                showErrorDialog(frame, ERROR_NO_DATA_MSG);
+                displayPluginGroup.clearSelection();
+            } else if (sortItemGroup.getSelection() == null) { // Cannot display when sorting function is not selected.
+                showErrorDialog(frame, ERROR_SORT_NOT_SELECTED_MSG);
+                displayPluginGroup.clearSelection();
+            } else { // Finally we can display the data now.
+                core.resetData();
+                if (filterFunction.isSelected()) {
+                    int time = 50 * ((int) selectedHour);
+                    core.filterByHours((int) selectedDay, time);
+                }
+                String indexOfKey = sortItemGroup.getSelection().getActionCommand();
+                int index = Integer.valueOf(indexOfKey);
+                core.sortByKey(index);
+                for(Restaurant res: core.getProcessedData()){
+                    System.out.println(res.getName());
+                }
+
+            }
         });
         displayPluginGroup.add(displayMenuItem);
         displayDataMenu.add(displayMenuItem);
     }
 
-    private static void showInfoDialog(Component c, String title, String msg) {
-        JOptionPane.showMessageDialog(c, msg, title, JOptionPane.INFORMATION_MESSAGE);
+    private static void showErrorDialog(Component c, String msg) {
+        JOptionPane.showMessageDialog(c, msg, "Error!", JOptionPane.ERROR_MESSAGE);
     }
 
-    private static void showErrorDialog(Component c, String title, String msg) {
-        JOptionPane.showMessageDialog(c, msg, title, JOptionPane.ERROR_MESSAGE);
+    @Override
+    public void onDataPluginChanged(DataPlugin plugin, String city) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Current data plugin: ");
+        if (plugin != null) {
+            sb.append(plugin.toString());
+        } else {
+            sb.append("null");
+        }
+        sb.append("   City name: ");
+        sb.append(city);
+        currentDataLabel.setText(sb.toString());
+    }
+
+    @Override
+    public void onSortChanged(int index) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Sort by: ");
+        sb.append(core.getKeys().get(index));
+        currentSortLabel.setText(sb.toString());
+    }
+
+    @Override
+    public void onFilterChanged(int day, int time) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Filter by: ");
+        if (day == -1 && time == -1) {
+            sb.append("null");
+        } else {
+            sb.append(DAYS[day] + " ");
+            time *= 50;
+            sb.append(time / 100 + ":");
+            sb.append(time % 100);
+        }
+        currentFilterLabel.setText(sb.toString());
     }
 }

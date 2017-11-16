@@ -15,7 +15,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="plugins" exported="" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: junit-4.11:11">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library name="JUnit4">
         <CLASSES>

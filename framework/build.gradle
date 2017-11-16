@@ -1,4 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'application'
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
 
