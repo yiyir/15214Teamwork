@@ -8,3 +8,11 @@ dependencies {
     compile project(':framework')
 
 }
+repositories {
+    mavenCentral()
+}
+buildscript{
+    repositories {
+        mavenCentral()
+    }
+}
