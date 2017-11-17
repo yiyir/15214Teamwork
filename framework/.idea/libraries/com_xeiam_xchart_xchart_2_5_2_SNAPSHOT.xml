@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="com.xeiam.xchart:xchart:2.5.2-SNAPSHOT" type="repository">
+    <properties maven-id="com.xeiam.xchart:xchart:2.5.2-SNAPSHOT" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/xeiam/xchart/xchart/2.5.2-SNAPSHOT/xchart-2.5.2-SNAPSHOT.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/erichseifert/vectorgraphics2d/VectorGraphics2D/0.9.2/VectorGraphics2D-0.9.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

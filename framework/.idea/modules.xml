@@ -3,8 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1806163733/Team15.iml" filepath="$PROJECT_DIR$/.idea/modules/-1806163733/Team15.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1527233148/Team15-plugins.iml" filepath="$PROJECT_DIR$/.idea/modules/1527233148/Team15-plugins.iml" />
       <module fileurl="file://$PROJECT_DIR$/framework.iml" filepath="$PROJECT_DIR$/framework.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1527233148/plugins.iml" filepath="$PROJECT_DIR$/.idea/modules/1527233148/plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../plugins/src/plugins.iml" filepath="$PROJECT_DIR$/../plugins/src/plugins.iml" />
     </modules>
   </component>
 </project>

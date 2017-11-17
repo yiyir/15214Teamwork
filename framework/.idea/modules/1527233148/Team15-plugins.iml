@@ -16,10 +16,18 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="framework" scope="PROVIDED" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.knowm.xchart:xchart:3.2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.code.gson:gson:2.8.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: de.erichseifert.vectorgraphics2d:VectorGraphics2D:0.11" level="project" />
     <orderEntry type="module" module-name="framework" scope="RUNTIME" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.knowm.xchart:xchart:3.2.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.code.gson:gson:2.8.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: de.erichseifert.vectorgraphics2d:VectorGraphics2D:0.11" level="project" />
     <orderEntry type="module" module-name="framework" scope="TEST" />
-    <orderEntry type="library" exported="" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
-    <orderEntry type="library" exported="" name="com.xeiam.xchart:xchart:2.5.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.knowm.xchart:xchart:3.2.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.gson:gson:2.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: de.erichseifert.vectorgraphics2d:VectorGraphics2D:0.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>
