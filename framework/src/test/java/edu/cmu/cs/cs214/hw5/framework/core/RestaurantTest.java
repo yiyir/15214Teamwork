@@ -27,15 +27,55 @@ public class RestaurantTest {
             hours.add(weekends);
         }
         restaurant.setHours(hours);
+        restaurant.addData("ReviewCounts",100.0);
+        restaurant.addData("ImageCounts", 40.0);
+        restaurant.addData("CheckinCounts",250.0);
     }
 
     @Test
-    public void isOpen() throws Exception {
+    public void isOpenTest() throws Exception {
         assertFalse(restaurant.isOpen(1, 900));
         assertTrue(restaurant.isOpen(3, 1600));
         assertTrue(restaurant.isOpen(4, 2344));
         assertTrue(restaurant.isOpen(5, 105));
         assertFalse(restaurant.isOpen(6, 344));
+    }
+
+    public void getHoursTest() throws Exception {
+        List<List<Integer>> hours = restaurant.getHours();
+        assertEquals(hours.size(),7);
+        assertEquals(hours.get(0).size(),2);
+        assertTrue(hours.get(0).get(0)==1000);
+    }
+
+    @Test
+    public void getKeysTest() throws Exception {
+        List<String> keys = restaurant.getKeys();
+        assertEquals(keys.size(),3);
+    }
+
+    @Test
+    public void getValuesTest() throws Exception {
+        List<Double> values = restaurant.getValues();
+        assertEquals(values.size(),3);
+        assertTrue(values.get(0)==100.0);
+        assertTrue(values.get(1)==40.0);
+        assertTrue(values.get(2)==250.0);
+    }
+
+    @Test
+    public void getNameTest() throws Exception {
+        assertEquals(restaurant.getName(),"example");
+    }
+
+    @Test
+    public void toStringTest() throws Exception {
+        assertEquals(restaurant.toString(),"example");
+    }
+
+    @Test
+    public void getCityTest() throws Exception {
+        assertEquals(restaurant.getCity(),"Pittsburgh");
     }
 
 }

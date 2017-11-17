@@ -136,17 +136,21 @@ public class TopfoodFrameworkImpl {
             currentDisplayPlugin = plugin;
         }
         if (processedData.isEmpty()) return false;
-        String[] xData = new String[10];
-        for (int i = 0; i < 10; i++) {
+        int num =10;
+        if(processedData.size()<10){
+            num = processedData.size();
+        }
+        String[] xData = new String[num];
+        for (int i = 0; i < num; i++) {
             xData[i] = processedData.get(i).getName();
         }
-        Double[] yData = new Double[10];
-        for (int i = 0; i < 10; i++) {
+        Double[] yData = new Double[num];
+        for (int i = 0; i < num; i++) {
             yData[i] = processedData.get(i).getValues().get(index);
         }
         String xLabel = "Restaurant Name";
         String yLabel = getKeys().get(index);
-        String title = "Top 10 Restaurants in " + city;
+        String title = "Top Restaurants in " + city;
         currentDisplayPlugin.display(xData, yData, xLabel, yLabel, title);
         return true;
     }

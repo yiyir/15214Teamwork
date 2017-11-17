@@ -17,7 +17,7 @@ public class Main {
     }
 
     private static void createAndStartFramework() {
-       TopfoodFrameworkImpl core = new TopfoodFrameworkImpl();
+        TopfoodFrameworkImpl core = new TopfoodFrameworkImpl();
         TopfoodFrameworkGui gui = new TopfoodFrameworkGui(core);
         core.setTopfoodChangeListener(gui);
         List<DataPlugin> dataPlugins = loadDataPlugins();

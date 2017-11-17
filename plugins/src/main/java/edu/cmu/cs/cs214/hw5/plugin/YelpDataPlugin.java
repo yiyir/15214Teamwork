@@ -19,8 +19,10 @@ public class YelpDataPlugin implements DataPlugin{
             List<List<Integer>> hours2  = new ArrayList<>();
             List<Integer> standardDay = new ArrayList<>();
             List<Integer> specialDay = new ArrayList<>();
-            specialDay.add(1000,1400);
-            standardDay.add(1000,2200);
+            specialDay.add(1000);
+            specialDay.add(1400);
+            standardDay.add(1000);
+            standardDay.add(2200);
             for(int i = 0;i <7;i++){
                 hours1.add(standardDay);
             }

@@ -7,7 +7,9 @@ public interface TopfoodChangeListener {
 
     void onDataPluginChanged(DataPlugin plugin, String city);
 
+    void onDisplayPluginChanged(DisplayPlugin plugin);
+
     void onSortChanged(int index);
 
-    void onFilterChanged(int day, int time);
+    void onFilterChanged(String day, String time);
 }

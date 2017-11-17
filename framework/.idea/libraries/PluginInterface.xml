@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="PluginInterface">
-    <CLASSES />
-    <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/../plugins/src/main/java" />
-    </SOURCES>
-  </library>
-</component>
