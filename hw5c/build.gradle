@@ -1,0 +1,15 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'com.squareup.okhttp3:okhttp:3.9.0'
+  compile 'org.json:json:20141113'
+  compile 'org.knowm.xchart:xchart:3.5.0'
+  compile project(":framework")
+  compile 'com.google.cloud:google-cloud-language:0.26.0-beta'
+}
